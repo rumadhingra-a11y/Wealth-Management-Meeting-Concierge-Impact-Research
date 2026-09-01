@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wealth Management Dashboard — UX Research Findings &amp; Roadmap</title>
+<style>
+  :root{
+    color-scheme: light;
+    --surface-page:   #f9f9f7;
+    --surface-card:   #fcfcfb;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --gridline:       #e1e0d9;
+    --border:         rgba(11,11,11,0.10);
+    --border-strong:  #c3c2b7;
+
+    --blue:    #2a78d6;
+    --orange:  #eb6834;
+    --aqua:    #1baf7a;
+    --yellow:  #eda100;
+    --magenta: #e87ba4;
+    --green:   #008300;
+    --violet:  #4a3aa7;
+    --red:     #e34948;
+
+    --good:     #0ca30c;
+    --warning:  #fab219;
+    --serious:  #ec835a;
+    --critical: #d03b3b;
+
+    --success-text: #006300;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 2px rgba(11,11,11,0.04), 0 1px 12px rgba(11,11,11,0.04);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:where(:not([data-theme="light"])){
+      color-scheme: dark;
+      --surface-page:   #0d0d0d;
+      --surface-card:   #1a1a19;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #898781;
+      --gridline:       #2c2c2a;
+      --border:         rgba(255,255,255,0.10);
+      --border-strong:  #383835;
+
+      --blue:    #3987e5;
+      --orange:  #d95926;
+      --aqua:    #199e70;
+      --yellow:  #c98500;
+      --magenta: #d55181;
+      --green:   #008300;
+      --violet:  #9085e9;
+      --red:     #e66767;
+
+      --good:     #0ca30c;
+      --warning:  #fab219;
+      --serious:  #ec835a;
+      --critical: #e66767;
+      --success-text: #0ca30c;
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --surface-page:   #0d0d0d;
+    --surface-card:   #1a1a19;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #898781;
+    --gridline:       #2c2c2a;
+    --border:         rgba(255,255,255,0.10);
+    --border-strong:  #383835;
+
+    --blue:    #3987e5;
+    --orange:  #d95926;
+    --aqua:    #199e70;
+    --yellow:  #c98500;
+    --magenta: #d55181;
+    --green:   #008300;
+    --violet:  #9085e9;
+    --red:     #e66767;
+
+    --good:     #0ca30c;
+    --warning:  #fab219;
+    --serious:  #ec835a;
+    --critical: #e66767;
+    --success-text: #0ca30c;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background:var(--surface-page);
+    color:var(--text-primary);
+    line-height:1.5;
+  }
+  section{ scroll-margin-top: 76px; }
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 24px; }
+
+  /* ---------- Top bar ---------- */
+  header.topbar{
+    position:sticky; top:0; z-index:50;
+    background:var(--surface-card);
+    border-bottom:1px solid var(--border);
+    backdrop-filter: blur(6px);
+  }
+  .topbar-inner{
+    max-width:1180px; margin:0 auto; padding:12px 24px;
+    display:flex; align-items:center; gap:20px; flex-wrap:wrap;
+  }
+  .brand{ font-weight:700; font-size:15px; white-space:nowrap; }
+  .brand span{ color:var(--text-muted); font-weight:500; }
+  nav.jump{ display:flex; gap:16px; flex-wrap:wrap; flex:1; }
+  nav.jump a{
+    color:var(--text-secondary); text-decoration:none; font-size:13px; font-weight:600;
+    padding:6px 2px; border-bottom:2px solid transparent;
+  }
+  nav.jump a:hover{ color:var(--text-primary); border-bottom-color:var(--blue); }
+  .topbar-actions{ display:flex; gap:10px; align-items:center; }
+  .btn{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:13px; font-weight:700; padding:8px 14px; border-radius:999px;
+    text-decoration:none; border:1px solid var(--border-strong); cursor:pointer;
+    background:transparent; color:var(--text-primary);
+  }
+  .btn-primary{ background:var(--blue); color:#fff; border-color:var(--blue); }
+  .btn-primary:hover{ opacity:0.9; }
+  .btn-ghost:hover{ background:var(--surface-page); }
+
+  /* ---------- Hero ---------- */
+  .hero{ padding:48px 0 8px; }
+  .eyebrow{
+    text-transform:uppercase; letter-spacing:0.08em; font-size:12px; font-weight:700;
+    color:var(--blue);
+  }
+  h1{ font-size:32px; margin:10px 0 8px; line-height:1.2; max-width:820px; }
+  .hero p.lede{ font-size:16px; color:var(--text-secondary); max-width:760px; margin:0 0 24px; }
+
+  .stat-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:24px 0 40px;
+  }
+  .stat-tile{
+    background:var(--surface-card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:18px 20px; box-shadow:var(--shadow);
+  }
+  .stat-tile .value{ font-size:28px; font-weight:800; letter-spacing:-0.01em; }
+  .stat-tile .label{ font-size:13px; color:var(--text-secondary); margin-top:4px; }
+
+  /* ---------- Section shell ---------- */
+  .section{ padding:44px 0; border-top:1px solid var(--gridline); }
+  .section-head{ display:flex; align-items:baseline; gap:12px; margin-bottom:6px; flex-wrap:wrap; }
+  .section-tag{
+    display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700;
+    padding:4px 10px; border-radius:999px; white-space:nowrap;
+  }
+  .section-tag .dot{ width:8px; height:8px; border-radius:50%; }
+  h2{ font-size:22px; margin:0; }
+  .section-sub{ color:var(--text-secondary); font-size:14.5px; max-width:760px; margin:8px 0 26px; }
+
+  /* ---------- Actionable insight band ---------- */
+  .actions-band{ background:var(--surface-card); border:1px solid var(--border); border-radius:var(--radius); padding:28px; margin-bottom:8px; }
+  .actions-band h2{ margin-bottom:4px; }
+  .action-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:20px; }
+  .action-card{
+    border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px;
+    background:var(--surface-page);
+  }
+  .action-card .num{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:50%; background:var(--blue); color:#fff;
+    font-size:12px; font-weight:800; margin-bottom:10px;
+  }
+  .action-card h4{ margin:0 0 6px; font-size:14.5px; }
+  .action-card p{ margin:0; font-size:13px; color:var(--text-secondary); }
+  .action-card .who{ margin-top:10px; font-size:12px; color:var(--text-muted); font-weight:600; }
+
+  .callout{
+    margin-top:22px; padding:16px 18px; border-radius:var(--radius-sm);
+    background:var(--surface-card); border:1px solid var(--border); border-left:4px solid var(--blue);
+    font-size:14px; color:var(--text-secondary);
+  }
+  .callout b{ color:var(--text-primary); }
+
+  /* ---------- Table ---------- */
+  .table-card{ border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; background:var(--surface-card); }
+  table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  thead th{
+    text-align:left; padding:12px 16px; background:var(--surface-page);
+    font-size:12px; text-transform:uppercase; letter-spacing:0.03em; color:var(--text-muted);
+    border-bottom:1px solid var(--gridline);
+  }
+  tbody td{ padding:14px 16px; border-bottom:1px solid var(--gridline); vertical-align:top; }
+  tbody tr:last-child td{ border-bottom:none; }
+  td.legacy{ color:var(--text-muted); }
+  td.legacy .tagline{ display:inline-block; margin-top:4px; font-size:11px; font-weight:700; color:var(--text-muted); }
+  td.strategic{ color:var(--text-primary); font-weight:600; }
+  td.strategic .tagline{ display:inline-block; margin-top:4px; font-size:11px; font-weight:700; color:var(--good); }
+  td.persona{ color:var(--text-secondary); font-size:13px; }
+  td.cat{ font-weight:700; }
+
+  /* ---------- Card grid ---------- */
+  .card-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:20px; }
+  .card{
+    background:var(--surface-card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:20px; box-shadow:var(--shadow);
+  }
+  .card h4{ margin:0 0 8px; font-size:15px; display:flex; align-items:center; gap:8px; }
+  .card p{ margin:0; font-size:13.5px; color:var(--text-secondary); }
+  .card .quote{
+    margin-top:12px; font-size:12.5px; font-style:italic; color:var(--text-muted);
+    border-left:2px solid var(--border-strong); padding-left:10px;
+  }
+
+  /* ---------- Badges (status + categorical) ---------- */
+  .badge{
+    display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700;
+    padding:4px 9px; border-radius:999px;
+  }
+  .badge .dot{ width:7px; height:7px; border-radius:50%; flex:none; }
+  .badge-good{ background:rgba(12,163,12,0.12); color:var(--text-primary); }
+  .badge-good .dot{ background:var(--good); }
+  .badge-warning{ background:rgba(250,178,25,0.16); color:var(--text-primary); }
+  .badge-warning .dot{ background:var(--warning); }
+  .badge-serious{ background:rgba(236,131,90,0.16); color:var(--text-primary); }
+  .badge-serious .dot{ background:var(--serious); }
+  .badge-critical{ background:rgba(208,59,59,0.14); color:var(--text-primary); }
+  .badge-critical .dot{ background:var(--critical); }
+
+  /* ---------- Two tab visual ---------- */
+  .tabs-visual{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px; }
+  .tab-panel{ border:1px solid var(--border); border-radius:var(--radius); background:var(--surface-card); overflow:hidden; }
+  .tab-panel .tab-head{ padding:12px 18px; font-weight:800; font-size:13.5px; color:#fff; }
+  .tab-panel.a .tab-head{ background:var(--blue); }
+  .tab-panel.b .tab-head{ background:var(--aqua); }
+  .tab-panel .tab-body{ padding:16px 18px; }
+  .tab-panel ul{ margin:0; padding-left:18px; font-size:13.5px; color:var(--text-secondary); }
+  .tab-panel li{ margin-bottom:6px; }
+
+  /* ---------- Peer ranking mock ---------- */
+  .mock{ border:1px dashed var(--border-strong); border-radius:var(--radius); padding:18px 20px; margin-top:16px; background:var(--surface-card); }
+  .mock .mock-label{ font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:12px; }
+  .meter-row{ margin-bottom:14px; }
+  .meter-row:last-child{ margin-bottom:0; }
+  .meter-row .meter-label{ display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:6px; }
+  .meter-row .meter-label span.tag{ font-weight:600; color:var(--text-muted); font-size:12px; }
+  .meter-track{ height:10px; border-radius:6px; background:var(--gridline); overflow:hidden; }
+  .meter-fill{ height:100%; border-radius:6px; }
+  .meter-fill.power{ background:var(--blue); width:92%; }
+  .meter-fill.coach{ background:var(--orange); width:34%; }
+
+  /* ---------- Filters row ---------- */
+  .filter-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+  .filter-chip{
+    display:inline-flex; align-items:center; gap:4px;
+    border:1px solid var(--border-strong); border-radius:999px; padding:8px 14px; font-size:13px;
+    font-weight:600; color:var(--text-secondary); background:var(--surface-card);
+    text-decoration:none; cursor:default;
+  }
+  .filter-chip b{ color:var(--text-primary); }
+  a.filter-chip{ cursor:pointer; }
+  a.filter-chip:hover{ border-color:var(--blue); color:var(--text-primary); }
+
+  /* ---------- Risk ladder ---------- */
+  .risk-ladder{ margin-top:20px; display:flex; flex-direction:column; gap:10px; }
+  .risk-item{
+    display:grid; grid-template-columns:170px 1fr; gap:16px; align-items:center;
+    border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px 18px; background:var(--surface-card);
+  }
+  .risk-item .tier{ font-weight:800; font-size:14px; }
+  .risk-item p{ margin:0; font-size:13.5px; color:var(--text-secondary); }
+
+  /* ---------- Top recommendations list ---------- */
+  .reco-list{ display:flex; flex-direction:column; gap:12px; margin-top:20px; }
+  .reco-item{
+    display:grid; grid-template-columns:44px 1fr; gap:16px;
+    background:var(--surface-card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:18px 20px; box-shadow:var(--shadow);
+  }
+  .reco-num{
+    width:36px; height:36px; border-radius:50%; background:var(--surface-page);
+    border:1px solid var(--border-strong); display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:14px; color:var(--text-primary);
+  }
+  .reco-body .reco-top{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .reco-body h4{ margin:0; font-size:15.5px; }
+  .reco-body p{ margin:6px 0 0; font-size:13.5px; color:var(--text-secondary); }
+  .reco-body .reco-foot{ margin-top:10px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .reco-chip{
+    font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.03em;
+    padding:3px 9px; border-radius:999px; color:#fff; white-space:nowrap;
+  }
+  .reco-chip.immediate{ background:var(--blue); }
+  .reco-chip.short{ background:var(--orange); }
+  .reco-chip.long{ background:var(--aqua); }
+  .reco-src{ font-size:12px; color:var(--text-muted); font-weight:600; }
+
+  /* ---------- Prototype feedback (liked / disliked) ---------- */
+  .feedback-grid{ display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:20px; }
+  .feedback-col{ border:1px solid var(--border); border-radius:var(--radius); background:var(--surface-card); overflow:hidden; }
+  .feedback-head{ padding:14px 20px; font-weight:800; font-size:14.5px; }
+  .feedback-col.liked .feedback-head{ background:rgba(12,163,12,0.12); color:var(--success-text); }
+  .feedback-col.disliked .feedback-head{ background:rgba(208,59,59,0.12); color:var(--critical); }
+  .feedback-item{ display:flex; gap:12px; padding:14px 20px; border-top:1px solid var(--gridline); }
+  .feedback-item:first-child{ border-top:none; }
+  .feedback-icon{
+    flex:none; width:22px; height:22px; border-radius:50%; margin-top:1px;
+    display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#fff;
+  }
+  .feedback-col.liked .feedback-icon{ background:var(--good); }
+  .feedback-col.disliked .feedback-icon{ background:var(--critical); }
+  .feedback-text h5{ margin:0 0 3px; font-size:13.5px; }
+  .feedback-text p{ margin:0; font-size:12.5px; color:var(--text-secondary); }
+  .feedback-text .src{ display:block; margin-top:4px; font-size:11px; color:var(--text-muted); font-weight:700; }
+
+  /* ---------- Experts ---------- */
+  .expert-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-top:20px; }
+  .expert-card{ text-align:center; border:1px solid var(--border); border-radius:var(--radius); padding:20px 12px; background:var(--surface-card); }
+  .avatar{
+    width:48px; height:48px; border-radius:50%; margin:0 auto 12px; display:flex; align-items:center;
+    justify-content:center; font-weight:800; color:#fff; font-size:15px;
+  }
+  .expert-card h4{ margin:0; font-size:14px; }
+  .expert-card .firm{ font-size:12.5px; color:var(--text-secondary); margin-top:2px; }
+  .expert-card .region{ font-size:11px; color:var(--text-muted); margin-top:6px; }
+
+  /* ---------- Footer ---------- */
+  footer{ border-top:1px solid var(--gridline); padding:40px 0 60px; }
+  footer .conclusion{
+    background:var(--surface-card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:26px 28px; font-size:15px; color:var(--text-secondary); position:relative;
+  }
+  footer .conclusion b{ color:var(--text-primary); }
+  footer .meta{ font-size:12px; color:var(--text-muted); }
+
+  @media (max-width: 980px){
+    .stat-grid{ grid-template-columns:repeat(2,1fr); }
+    .action-grid, .card-grid{ grid-template-columns:repeat(2,1fr); }
+    .reco-item{ grid-template-columns:1fr; }
+    .reco-num{ display:none; }
+    .expert-grid{ grid-template-columns:repeat(3,1fr); }
+    .tabs-visual{ grid-template-columns:1fr; }
+    .feedback-grid{ grid-template-columns:1fr; }
+    nav.jump{ display:none; }
+  }
+  @media (max-width: 640px){
+    .stat-grid, .action-grid, .card-grid{ grid-template-columns:1fr; }
+    .expert-grid{ grid-template-columns:repeat(2,1fr); }
+    .risk-item{ grid-template-columns:1fr; }
+    h1{ font-size:26px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">Wealth Mgmt Dashboard <span>UX Research</span></div>
+    <nav class="jump">
+      <a href="#recommendations">Top Recommendations</a>
+      <a href="#feedback">Prototype Feedback</a>
+      <a href="#actions">Key Actions</a>
+      <a href="#leadership-metrics">Leadership Metrics</a>
+      <a href="#experts">Research Panel</a>
+    </nav>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost" id="theme-toggle" type="button">🌙 Dark</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <section class="hero" id="overview">
+    <div class="eyebrow">UX Research Findings &amp; Product Roadmap</div>
+    <h1>Impact of Meeting Concierge on Wealth Management Dashboard: Preliminary Research Outcomes</h1>
+    <p class="lede">Synthesis of five practitioner interviews spanning boutique to global wealth management firms. The core finding: advisors and supervisors have stopped being impressed by efficiency — the dashboard now has to prove it moves Net Sales, Asset Activation, and Client Retention, or it gets ignored at the next budget cycle.</p>
+
+    <div class="stat-grid">
+      <div class="stat-tile">
+        <div class="value">5</div>
+        <div class="label">Industry veterans interviewed — Comerica, NBO, Mercer, The Mather Group, plus a multinational banking lead</div>
+      </div>
+      <div class="stat-tile">
+        <div class="value">11–700</div>
+        <div class="label">Advisors managed per team, boutique to global-bank scale</div>
+      </div>
+      <div class="stat-tile">
+        <div class="value">3 regions</div>
+        <div class="label">North America, Middle East &amp; India — each with distinct regulatory demands</div>
+      </div>
+      <div class="stat-tile">
+        <div class="value">30%</div>
+        <div class="label">Of the advisor scorecard tied to Portfolio Review completion at high-tier firms</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOP UX RECOMMENDATIONS -->
+  <section class="section" id="recommendations" style="border-top:none; padding-top:8px;">
+    <div class="section-head">
+      <span class="section-tag" style="background:rgba(11,11,11,0.06); color:var(--text-primary);"><span class="dot" style="background:var(--text-primary);"></span>RECOMMENDATIONS</span>
+      <h2>Top 7 UX recommendations</h2>
+    </div>
+    <p class="section-sub">Ranked by adoption impact. Each carries a build horizon so design, product, and engineering know when it lands.</p>
+
+    <div class="reco-list">
+      <div class="reco-item">
+        <div class="reco-num">1</div>
+        <div class="reco-body">
+          <div class="reco-top"><h4>Split the dashboard into two tabs</h4></div>
+          <p>Separate the strategic "Book of Business" view (AUM, net revenue, segment health) from the tactical "AI Adoption &amp; Performance" view (Meeting Concierge, prompt usage). One screen answers "are we growing," the other answers "is the tool working" — bundling them buries both signals.</p>
+          <div class="reco-foot">
+            <span class="reco-chip immediate">Immediate</span>
+            <span class="reco-src">Haley · Mercer</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="reco-item">
+        <div class="reco-num">2</div>
+        <div class="reco-body">
+          <div class="reco-top"><h4>Add a manual complexity-weighting toggle</h4></div>
+          <p>AUM alone is a broken proxy for advisor workload — a newly onboarded "baby" client can demand far more hands-on time than a large, dormant account. Let advisors manually weight client intensity so capacity reporting reflects reality.</p>
+          <div class="reco-foot">
+            <span class="reco-chip immediate">Immediate</span>
+            <span class="reco-src">Haley · Mercer</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="reco-item">
+        <div class="reco-num">3</div>
+        <div class="reco-body">
+          <div class="reco-top"><h4>Deploy peer stack ranking visuals</h4></div>
+          <p>Show advisors where they sit relative to peers on adoption and production. Ranking is a stronger adoption lever than any tutorial — it instantly flags who needs coaching and who can informally mentor others.</p>
+          <div class="reco-foot">
+            <span class="reco-chip immediate">Immediate</span>
+            <span class="reco-src">Timotei · Comerica</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="reco-item">
+        <div class="reco-num">4</div>
+        <div class="reco-body">
+          <div class="reco-top"><h4>Add hover-over transparency on every metric</h4></div>
+          <p>Attach a hover-over definition to AUM, Productivity, and every derived metric explaining exactly how it's calculated. Trust in the number is a prerequisite for trust in the tool — this is the cheapest fix with the highest credibility payoff.</p>
+          <div class="reco-foot">
+            <span class="reco-chip immediate">Immediate</span>
+            <span class="reco-src">Haley · Mercer</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="reco-item">
+        <div class="reco-num">5</div>
+        <div class="reco-body">
+          <div class="reco-top"><h4>Build a real-time incentive-to-paycheck feed</h4></div>
+          <p>Make compensation the dashboard's spine: show, in plain terms, how today's activity — completing a portfolio review, closing a wallet-share gap — flows through to the advisor's next paycheck. This is the single strongest adoption hook across every interview.</p>
+          <div class="reco-foot">
+            <span class="reco-chip short">Short-term</span>
+            <span class="reco-src">Timotei · Comerica</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="reco-item">
+        <div class="reco-num">6</div>
+        <div class="reco-body">
+          <div class="reco-top"><h4>Set automated segment alert thresholds</h4></div>
+          <p>Scope attrition-risk alerts specifically to UHNW and HNW tiers rather than a flat rule for all clients. A missed meeting means a routine service gap at mass-affluent tier, but a systemic risk at UHNW — the alerting logic should escalate accordingly.</p>
+          <div class="reco-foot">
+            <span class="reco-chip short">Short-term</span>
+            <span class="reco-src">Haley · Mercer</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="reco-item">
+        <div class="reco-num">7</div>
+        <div class="reco-body">
+          <div class="reco-top"><h4>Ship AI as headless, embeddable components</h4></div>
+          <p>Meet advisors inside the tools they already live in — Outlook, custom CRM tabs — instead of forcing a move into a standardized shell. This avoids the FSC migration "no-go" that stalls adoption at firms with heavy custom builds. Cognicore is the benchmark to beat.</p>
+          <div class="reco-foot">
+            <span class="reco-chip long">Long-term</span>
+            <span class="reco-src">Brian Schmail · The Mather Group</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROTOTYPE FEEDBACK: LIKED / DISLIKED -->
+  <section class="section" id="feedback">
+    <div class="section-head">
+      <span class="section-tag" style="background:rgba(11,11,11,0.06); color:var(--text-primary);"><span class="dot" style="background:var(--text-primary);"></span>PROTOTYPE FEEDBACK</span>
+      <h2>What advisors &amp; supervisors liked — and didn't — in the walkthrough</h2>
+    </div>
+    <p class="section-sub">Synthesized from reactions captured across the five interviews as participants walked through the prototype and current-state dashboards. This is a qualitative read of sentiment, not a scored usability benchmark.</p>
+
+    <div class="feedback-grid">
+      <div class="feedback-col liked">
+        <div class="feedback-head">✅ What landed well</div>
+        <div class="feedback-body">
+          <div class="feedback-item">
+            <div class="feedback-icon">✓</div>
+            <div class="feedback-text">
+              <h5>The two-tab split</h5>
+              <p>Separating strategic "Book of Business" health from tactical "AI Adoption" performance was seen as finally answering two different questions on two different screens, instead of one crowded one.</p>
+              <span class="src">Haley · Mercer</span>
+            </div>
+          </div>
+          <div class="feedback-item">
+            <div class="feedback-icon">✓</div>
+            <div class="feedback-text">
+              <h5>Peer stack ranking</h5>
+              <p>Comparing advisors against peers was received as a genuinely motivating, non-punitive way to open coaching conversations — not just another leaderboard.</p>
+              <span class="src">Timotei · Comerica</span>
+            </div>
+          </div>
+          <div class="feedback-item">
+            <div class="feedback-icon">✓</div>
+            <div class="feedback-text">
+              <h5>AI living inside existing workflows</h5>
+              <p>The idea of AI showing up inside Outlook or their existing CRM tabs — rather than a new destination to learn — was consistently the preferred direction over a standalone tool.</p>
+              <span class="src">Brian Schmail · The Mather Group</span>
+            </div>
+          </div>
+          <div class="feedback-item">
+            <div class="feedback-icon">✓</div>
+            <div class="feedback-text">
+              <h5>The wallet-share visualizer concept</h5>
+              <p>Surfacing "outside assets" clients hold with competitors reframed the CRM as a growth engine rather than a static system of record — described as the most commercially exciting idea discussed.</p>
+              <span class="src">Vasha · Multinational Banking Lead</span>
+            </div>
+          </div>
+          <div class="feedback-item">
+            <div class="feedback-icon">✓</div>
+            <div class="feedback-text">
+              <h5>Comp tied directly to daily activity</h5>
+              <p>Showing how today's actions flow through to the next paycheck was, by a clear margin, the most persuasive hook for driving day-to-day adoption.</p>
+              <span class="src">Timotei · Comerica</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feedback-col disliked">
+        <div class="feedback-head">🚫 What got flagged</div>
+        <div class="feedback-body">
+          <div class="feedback-item">
+            <div class="feedback-icon">✕</div>
+            <div class="feedback-text">
+              <h5>Raw "tokens used" displays</h5>
+              <p>On flat-fee contracts, showing token counts read less like transparency and more like a preview of a future price increase — it created anxiety rather than trust.</p>
+              <span class="src">Brian Schmail · The Mather Group</span>
+            </div>
+          </div>
+          <div class="feedback-item">
+            <div class="feedback-icon">✕</div>
+            <div class="feedback-text">
+              <h5>"Hours saved" as the headline number</h5>
+              <p>Effective for a first approval, but participants agreed it stops impressing anyone once it's the expected baseline — a shrinking-shelf-life metric to lead with.</p>
+              <span class="src">Brian Schmail · The Mather Group</span>
+            </div>
+          </div>
+          <div class="feedback-item">
+            <div class="feedback-icon">✕</div>
+            <div class="feedback-text">
+              <h5>AUM as the only workload signal</h5>
+              <p>Sizing advisor capacity off AUM alone was called out as unfair to advisors carrying several new, high-touch "baby" clients versus a few large, dormant accounts.</p>
+              <span class="src">Haley · Mercer</span>
+            </div>
+          </div>
+          <div class="feedback-item">
+            <div class="feedback-icon">✕</div>
+            <div class="feedback-text">
+              <h5>No floor on what counts as "productivity"</h5>
+              <p>Without a minimum transaction value, participants worried the metric would invite gaming — advisors logging low-value busywork just to move a number.</p>
+              <span class="src">Vasha · Multinational Banking Lead</span>
+            </div>
+          </div>
+          <div class="feedback-item">
+            <div class="feedback-icon">✕</div>
+            <div class="feedback-text">
+              <h5>Gross-sales-only growth reporting</h5>
+              <p>Reporting growth without separating out churn made "Net Sales" performance impossible to trust at a glance.</p>
+              <span class="src">Vasha · Multinational Banking Lead</span>
+            </div>
+          </div>
+          <div class="feedback-item">
+            <div class="feedback-icon">✕</div>
+            <div class="feedback-text">
+              <h5>A forced move to a standardized FSC data model</h5>
+              <p>For firms with extensive custom Lightning builds, being required to re-map objects into Salesforce Financial Services Cloud was described flatly as a deal-breaker, not a UX preference.</p>
+              <span class="src">Brian Schmail · The Mather Group</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOP ACTIONABLE INSIGHTS -->
+  <section id="actions">
+    <div class="actions-band">
+      <span class="section-tag" style="background:rgba(42,120,214,0.12); color:var(--blue);"><span class="dot" style="background:var(--blue);"></span>START HERE</span>
+      <h2 style="margin-top:10px;">Top 5 actionable insights</h2>
+      <p class="section-sub">If you only take five things into the next sprint planning session, take these.</p>
+      <div class="action-grid">
+        <div class="action-card">
+          <div class="num">1</div>
+          <h4>Retire "hours saved" as the hero metric</h4>
+          <p>It wins the first CFO approval, then becomes the expected baseline and loses persuasive power. Replace the primary narrative with Net Sales and Wallet Share capture.</p>
+          <div class="who">Brian Schmail · The Mather Group</div>
+        </div>
+        <div class="action-card">
+          <div class="num">2</div>
+          <h4>Split the dashboard into two tabs</h4>
+          <p>Separate strategic "Book of Business" health from tactical "AI Adoption" performance — one view answers "are we growing," the other answers "is the tool working."</p>
+          <div class="who">Haley · Mercer</div>
+        </div>
+        <div class="action-card">
+          <div class="num">3</div>
+          <h4>Hide token counts behind a translation layer</h4>
+          <p>Raw usage metrics create "cost anxiety" for flat-fee clients. Convert everything into Calculated ROI or Revenue-Influenced language before it reaches a supervisor's screen.</p>
+          <div class="who">Brian Schmail · The Mather Group</div>
+        </div>
+        <div class="action-card">
+          <div class="num">4</div>
+          <h4>Add a manual complexity toggle</h4>
+          <p>AUM is a broken proxy for workload — a newly onboarded "baby" client can outweigh a large, dormant one. Let advisors manually weight client intensity.</p>
+          <div class="who">Haley · Mercer</div>
+        </div>
+        <div class="action-card">
+          <div class="num">5</div>
+          <h4>Set an anti-gaming transaction floor</h4>
+          <p>Without a minimum transaction value, advisors can inflate activation KPIs with low-value busywork. Gate productivity credit behind a value threshold.</p>
+          <div class="who">Vasha · Multinational Banking Lead</div>
+        </div>
+        <div class="action-card" style="border-color:var(--blue);">
+          <div class="num" style="background:var(--good);">✓</div>
+          <h4>Don't force an FSC migration</h4>
+          <p>Firms with heavy custom Lightning builds treat a forced Salesforce FSC migration as a deal-breaker. Ship AI as headless, embeddable components instead.</p>
+          <div class="who">Brian Schmail · The Mather Group</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CRM ADOPTION -> LEADERSHIP METRICS -->
+  <section class="section" id="leadership-metrics">
+    <div class="section-head">
+      <span class="section-tag" style="background:rgba(42,120,214,0.12); color:var(--blue);"><span class="dot" style="background:var(--blue);"></span>ASKED DIRECTLY IN EVERY INTERVIEW</span>
+      <h2>Impact of Meeting Concierge on Wealth Management Dashboard for Heads of Wealth Advisors</h2>
+    </div>
+    <p class="section-sub">This was posed explicitly to every practitioner: when your advisors actually adopt the CRM's functionality, which business metrics move — and which of those are credible enough to put in front of your leadership or the board? The table below is the consolidated answer.</p>
+
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr><th>CRM functionality adopted</th><th>Metric it moves</th><th>What it signals to leadership</th><th>Who reports it up</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cat">Meeting Concierge / AI-assisted prep</td>
+            <td class="strategic">Portfolio Review completion rate<span class="tagline">30% of scorecard</span></td>
+            <td class="persona">Coverage risk is going down, not just meeting prep time — a compliance and service story, not a productivity one.</td>
+            <td class="persona">Supervisor</td>
+          </tr>
+          <tr>
+            <td class="cat">Wallet Share Opportunity Visualizer</td>
+            <td class="strategic">Wallet Share capture<span class="tagline">Outside assets converted</span></td>
+            <td class="persona">Revenue growth mined from the existing book — cheaper and faster to win than new client acquisition.</td>
+            <td class="persona">Advisor → Leadership</td>
+          </tr>
+          <tr>
+            <td class="cat">Incentive Tracking Feed</td>
+            <td class="strategic">Net Sales<span class="tagline">AUM inflow − redemptions</span></td>
+            <td class="persona">Real firm growth, with churn already netted out — defensible in front of the CFO in a way gross sales isn't.</td>
+            <td class="persona">Leadership / CFO</td>
+          </tr>
+          <tr>
+            <td class="cat">Tone &amp; sentiment analysis on client notes</td>
+            <td class="strategic">Client attrition risk score<span class="tagline">UHNW / HNW weighted</span></td>
+            <td class="persona">Retention risk is being caught proactively — especially where a single missed relationship is a systemic risk, not a service gap.</td>
+            <td class="persona">Supervisor → Leadership</td>
+          </tr>
+          <tr>
+            <td class="cat">Manual complexity-weighting toggle</td>
+            <td class="strategic">True capacity utilization<span class="tagline">Beyond raw AUM</span></td>
+            <td class="persona">Advisor workload is being measured fairly — a credible input into headcount and staffing conversations.</td>
+            <td class="persona">Leadership / Ops</td>
+          </tr>
+          <tr>
+            <td class="cat">Anti-gaming transaction floor</td>
+            <td class="strategic">Verified productivity &amp; activation KPIs</td>
+            <td class="persona">The adoption numbers reaching the board are audit-safe — not inflated by low-value busywork.</td>
+            <td class="persona">Supervisor / Compliance</td>
+          </tr>
+          <tr>
+            <td class="cat">Peer stack ranking engagement</td>
+            <td class="strategic">Adoption velocity<span class="tagline">Lagging → power user</span></td>
+            <td class="persona">The rollout itself is working — a leading indicator that shows up months before the revenue metrics do.</td>
+            <td class="persona">Supervisor → Leadership</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout" style="margin-top:22px;">
+      <b>How to phrase it upward:</b> lead with the metric in the third column, never the raw usage number. "Portfolio review completion is up" lands with a leadership team; "advisors used 40,000 tokens this month" invites a question about the invoice, not the outcome. — synthesized from Timotei (Comerica) and Brian Schmail (The Mather Group)
+    </div>
+
+    <p class="section-sub" style="margin:26px 0 8px;"><b style="color:var(--text-primary);">Reporting cadence expected by leadership</b></p>
+    <div class="filter-row">
+      <span class="filter-chip"><b>Daily</b> — advisor / supervisor working view</span>
+      <span class="filter-chip"><b>Monthly</b> — regional roll-up</span>
+      <span class="filter-chip"><b>Quarterly</b> — leadership business review</span>
+      <span class="filter-chip"><b>Annual / 5-year trend</b> — board-ready</span>
+    </div>
+  </section>
+
+  <!-- EXPERTS -->
+  <section class="section" id="experts">
+    <div class="section-head">
+      <span class="section-tag" style="background:rgba(11,11,11,0.06); color:var(--text-primary);"><span class="dot" style="background:var(--text-primary);"></span>METHODOLOGY</span>
+      <h2>Research panel</h2>
+    </div>
+    <p class="section-sub">Deep-dive qualitative interviews with practitioners managing teams from 11 to 700 advisors across North America, the Middle East, and India — spanning boutique firms to global institutions.</p>
+
+    <div class="expert-grid">
+      <div class="expert-card">
+        <div class="avatar" style="background:var(--blue);">T</div>
+        <h4>Timotei</h4>
+        <div class="firm">Comerica</div>
+        <div class="region">North America · Comp &amp; adoption</div>
+      </div>
+      <div class="expert-card">
+        <div class="avatar" style="background:var(--aqua);">V</div>
+        <h4>Vasim</h4>
+        <div class="firm">NBO</div>
+        <div class="region">Middle East · Compliance &amp; data residency</div>
+      </div>
+      <div class="expert-card">
+        <div class="avatar" style="background:var(--yellow); color:#3a2a00;">H</div>
+        <h4>Haley</h4>
+        <div class="firm">Mercer</div>
+        <div class="region">Global · Segmentation &amp; workload</div>
+      </div>
+      <div class="expert-card">
+        <div class="avatar" style="background:var(--violet);">V</div>
+        <h4>Vasha</h4>
+        <div class="firm">Multinational Banking Lead</div>
+        <div class="region">India · Growth &amp; guardrails</div>
+      </div>
+      <div class="expert-card">
+        <div class="avatar" style="background:var(--orange);">B</div>
+        <h4>Brian Schmail</h4>
+        <div class="firm">The Mather Group</div>
+        <div class="region">North America · Architecture &amp; narrative</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="conclusion">
+      <p style="margin:0;">By pivoting the UX from operational efficiency to strategic business outcomes — <b>Net Sales</b> and <b>AUM growth</b> — this roadmap turns the platform from a utility into a <b>top-line growth engine</b>, securing its place at the center of the firm's strategic future.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const toggle = document.getElementById('theme-toggle');
+  const root = document.documentElement;
+  function applyStoredTheme(){
+    const stored = localStorage.getItem('theme');
+    if(stored){ root.setAttribute('data-theme', stored); }
+    updateLabel();
+  }
+  function updateLabel(){
+    const current = root.getAttribute('data-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = current === 'dark' || (!current && prefersDark);
+    toggle.textContent = isDark ? '☀️ Light' : '🌙 Dark';
+  }
+  toggle.addEventListener('click', () => {
+    const current = root.getAttribute('data-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = current === 'dark' || (!current && prefersDark);
+    const next = isDark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    updateLabel();
+  });
+  applyStoredTheme();
+</script>
+</body>
+</html>
