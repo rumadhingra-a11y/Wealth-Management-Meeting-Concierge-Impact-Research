@@ -179,30 +179,6 @@
   .action-card p{ margin:0; font-size:13px; color:var(--text-secondary); }
   .action-card .who{ margin-top:10px; font-size:12px; color:var(--text-muted); font-weight:600; }
 
-  .callout{
-    margin-top:22px; padding:16px 18px; border-radius:var(--radius-sm);
-    background:var(--surface-card); border:1px solid var(--border); border-left:4px solid var(--blue);
-    font-size:14px; color:var(--text-secondary);
-  }
-  .callout b{ color:var(--text-primary); }
-
-  /* ---------- Table ---------- */
-  .table-card{ border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; background:var(--surface-card); }
-  table{ width:100%; border-collapse:collapse; font-size:13.5px; }
-  thead th{
-    text-align:left; padding:12px 16px; background:var(--surface-page);
-    font-size:12px; text-transform:uppercase; letter-spacing:0.03em; color:var(--text-muted);
-    border-bottom:1px solid var(--gridline);
-  }
-  tbody td{ padding:14px 16px; border-bottom:1px solid var(--gridline); vertical-align:top; }
-  tbody tr:last-child td{ border-bottom:none; }
-  td.legacy{ color:var(--text-muted); }
-  td.legacy .tagline{ display:inline-block; margin-top:4px; font-size:11px; font-weight:700; color:var(--text-muted); }
-  td.strategic{ color:var(--text-primary); font-weight:600; }
-  td.strategic .tagline{ display:inline-block; margin-top:4px; font-size:11px; font-weight:700; color:var(--good); }
-  td.persona{ color:var(--text-secondary); font-size:13px; }
-  td.cat{ font-weight:700; }
-
   /* ---------- Card grid ---------- */
   .card-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:20px; }
   .card{
@@ -364,7 +340,6 @@
       <a href="#recommendations">Top Recommendations</a>
       <a href="#feedback">Prototype Feedback</a>
       <a href="#actions">Key Actions</a>
-      <a href="#leadership-metrics">Leadership Metrics</a>
       <a href="#experts">Research Panel</a>
     </nav>
     <div class="topbar-actions">
@@ -651,79 +626,6 @@
           <div class="who">Brian Schmail · The Mather Group</div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- CRM ADOPTION -> LEADERSHIP METRICS -->
-  <section class="section" id="leadership-metrics">
-    <div class="section-head">
-      <span class="section-tag" style="background:rgba(42,120,214,0.12); color:var(--blue);"><span class="dot" style="background:var(--blue);"></span>ASKED DIRECTLY IN EVERY INTERVIEW</span>
-      <h2>Impact of Meeting Concierge on Wealth Management Dashboard for Heads of Wealth Advisors</h2>
-    </div>
-    <p class="section-sub">This was posed explicitly to every practitioner: when your advisors actually adopt the CRM's functionality, which business metrics move — and which of those are credible enough to put in front of your leadership or the board? The table below is the consolidated answer.</p>
-
-    <div class="table-card">
-      <table>
-        <thead>
-          <tr><th>CRM functionality adopted</th><th>Metric it moves</th><th>What it signals to leadership</th><th>Who reports it up</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="cat">Meeting Concierge / AI-assisted prep</td>
-            <td class="strategic">Portfolio Review completion rate<span class="tagline">30% of scorecard</span></td>
-            <td class="persona">Coverage risk is going down, not just meeting prep time — a compliance and service story, not a productivity one.</td>
-            <td class="persona">Supervisor</td>
-          </tr>
-          <tr>
-            <td class="cat">Wallet Share Opportunity Visualizer</td>
-            <td class="strategic">Wallet Share capture<span class="tagline">Outside assets converted</span></td>
-            <td class="persona">Revenue growth mined from the existing book — cheaper and faster to win than new client acquisition.</td>
-            <td class="persona">Advisor → Leadership</td>
-          </tr>
-          <tr>
-            <td class="cat">Incentive Tracking Feed</td>
-            <td class="strategic">Net Sales<span class="tagline">AUM inflow − redemptions</span></td>
-            <td class="persona">Real firm growth, with churn already netted out — defensible in front of the CFO in a way gross sales isn't.</td>
-            <td class="persona">Leadership / CFO</td>
-          </tr>
-          <tr>
-            <td class="cat">Tone &amp; sentiment analysis on client notes</td>
-            <td class="strategic">Client attrition risk score<span class="tagline">UHNW / HNW weighted</span></td>
-            <td class="persona">Retention risk is being caught proactively — especially where a single missed relationship is a systemic risk, not a service gap.</td>
-            <td class="persona">Supervisor → Leadership</td>
-          </tr>
-          <tr>
-            <td class="cat">Manual complexity-weighting toggle</td>
-            <td class="strategic">True capacity utilization<span class="tagline">Beyond raw AUM</span></td>
-            <td class="persona">Advisor workload is being measured fairly — a credible input into headcount and staffing conversations.</td>
-            <td class="persona">Leadership / Ops</td>
-          </tr>
-          <tr>
-            <td class="cat">Anti-gaming transaction floor</td>
-            <td class="strategic">Verified productivity &amp; activation KPIs</td>
-            <td class="persona">The adoption numbers reaching the board are audit-safe — not inflated by low-value busywork.</td>
-            <td class="persona">Supervisor / Compliance</td>
-          </tr>
-          <tr>
-            <td class="cat">Peer stack ranking engagement</td>
-            <td class="strategic">Adoption velocity<span class="tagline">Lagging → power user</span></td>
-            <td class="persona">The rollout itself is working — a leading indicator that shows up months before the revenue metrics do.</td>
-            <td class="persona">Supervisor → Leadership</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="callout" style="margin-top:22px;">
-      <b>How to phrase it upward:</b> lead with the metric in the third column, never the raw usage number. "Portfolio review completion is up" lands with a leadership team; "advisors used 40,000 tokens this month" invites a question about the invoice, not the outcome. — synthesized from Timotei (Comerica) and Brian Schmail (The Mather Group)
-    </div>
-
-    <p class="section-sub" style="margin:26px 0 8px;"><b style="color:var(--text-primary);">Reporting cadence expected by leadership</b></p>
-    <div class="filter-row">
-      <span class="filter-chip"><b>Daily</b> — advisor / supervisor working view</span>
-      <span class="filter-chip"><b>Monthly</b> — regional roll-up</span>
-      <span class="filter-chip"><b>Quarterly</b> — leadership business review</span>
-      <span class="filter-chip"><b>Annual / 5-year trend</b> — board-ready</span>
     </div>
   </section>
 
